@@ -1,0 +1,8 @@
+*.root
+*~
+*.pyc
+*.png
+condorTEMPLATE*
+*.txt
+*__init__.py
+*DS_Store*
