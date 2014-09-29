@@ -28,6 +28,38 @@
 #include "FWCore/Framework/interface/MakerMacros.h"
 
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
+//PSimHitContainer includes PSimHit and Vector already
+#include "SimDataFormats/TrackingHit/interface/PSimHitContainer.h"
+#include "FWCore/ServiceRegistry/interface/Service.h"
+#include "CommonTools/UtilAlgos/interface/TFileService.h"
+
+#include "SimDataFormats/Track/interface/SimTrack.h"
+
+#include "SimDataFormats/Vertex/interface/SimVertex.h"
+#include "DataFormats/VertexReco/interface/Vertex.h"
+
+#include "DataFormats/GeometryVector/interface/LocalVector.h"
+
+#include "DataFormats/Candidate/interface/Candidate.h"
+#include "DataFormats/Candidate/interface/CandidateFwd.h"
+#include "DataFormats/HepMCCandidate/interface/GenParticle.h"
+
+#include "TTree.h"
+
+#include <math.h>
+#include <map>
+#include <string>
+#include <sstream>
+#include <vector>
+#include <tuple>
+#include <cstdlib>
+#include <fstream>
+//for split()
+#include <boost/algorithm/string/split.hpp>
+#include <boost/algorithm/string/classification.hpp>
+
+using namespace edm;
+using namespace std;
 //
 // class declaration
 //
@@ -44,6 +76,10 @@ class PLTPileupProducer : public edm::EDAnalyzer {
       virtual void beginJob() override;
       virtual void analyze(const edm::Event&, const edm::EventSetup&) override;
       virtual void endJob() override;
+      edm::Service<TFileService> fs;
+      TTree* tree;
+      int eventNum;
+      bool hasHits;
 
       //virtual void beginRun(edm::Run const&, edm::EventSetup const&) override;
       //virtual void endRun(edm::Run const&, edm::EventSetup const&) override;
@@ -69,6 +105,11 @@ PLTPileupProducer::PLTPileupProducer(const edm::ParameterSet& iConfig)
 {
    //now do what ever initialization is needed
 
+  tree = fs->make<TTree>("tree","tree");
+  tree->Branch("eventNum",&eventNum,"eventNum/I");
+  tree->Branch("hasHits",&hasHits,"hasHits/O");
+
+
 }
 
 
@@ -89,19 +130,16 @@ PLTPileupProducer::~PLTPileupProducer()
 void
 PLTPileupProducer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
-   using namespace edm;
+    eventNum = (int)iEvent.id().event();
+
+    edm::Handle<PSimHitContainer> simHitHandle;
+    edm::InputTag tag("g4SimHits","PLTHits","SIM");
+    iEvent.getByLabel(tag,simHitHandle);
+    hasHits = (simHitHandle->size()>0 ? true : false);
+    tree->Fill();
 
 
 
-#ifdef THIS_IS_AN_EVENT_EXAMPLE
-   Handle<ExampleData> pIn;
-   iEvent.getByLabel("example",pIn);
-#endif
-   
-#ifdef THIS_IS_AN_EVENTSETUP_EXAMPLE
-   ESHandle<SetupData> pSetup;
-   iSetup.get<SetupRecord>().get(pSetup);
-#endif
 }
 
 
