@@ -42,13 +42,6 @@ process.MessageLogger.cerr.FwkReport.reportEvery = options.reportEvery
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(options.maxEvents) )
 
 #source files
-# process.load("Analyzers.PLTSimHitAnalyzer.minbiaspileup_cfi")
-# process.load("Analyzers.PLTSimHitAnalyzer.muongun_largerange_cfi")
-# process.load("Analyzers.PLTSimHitAnalyzer.MinBias14TeV_NoSmear_cfi")
-# phi = 0
-# if not options.phiAtZero:
-#   phi = 225
-# process.load("Analyzers.PLTSimHitAnalyzer.MinBiasBeamSpotPhi%iR%i_cfi"%(phi,options.r))
 
 #if cfi file passed in at runtime, use it as input
 if options.inputCfi != "DUMMY":
@@ -70,9 +63,6 @@ process.TFileService = cms.Service("TFileService",
 )
 
 #maybe have these paramateters as ones that can be passed in via VarParsing?
-process.produce = cms.EDAnalyzer('PLTPileupProducer',
-
-)
-
+process.produce = cms.EDAnalyzer('PLTPileupProducer')
 
 process.p = cms.Path(process.produce)

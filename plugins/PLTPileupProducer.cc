@@ -78,8 +78,19 @@ class PLTPileupProducer : public edm::EDAnalyzer {
       virtual void endJob() override;
       edm::Service<TFileService> fs;
       TTree* tree;
+      static const int maxNHits = 500;
+      int nHits;
       int eventNum;
       bool hasHits;
+      float pabs[maxNHits];
+      float energyLoss[maxNHits];
+      float thetaAtEntry[maxNHits];
+      float phiAtEntry[maxNHits];
+      float tof[maxNHits];
+      int particleType[maxNHits];
+      int detUnitId[maxNHits];
+      int trackId[maxNHits];
+
 
       //virtual void beginRun(edm::Run const&, edm::EventSetup const&) override;
       //virtual void endRun(edm::Run const&, edm::EventSetup const&) override;
@@ -105,10 +116,18 @@ PLTPileupProducer::PLTPileupProducer(const edm::ParameterSet& iConfig)
 {
    //now do what ever initialization is needed
 
-  tree = fs->make<TTree>("tree","tree");
-  tree->Branch("eventNum",&eventNum,"eventNum/I");
-  tree->Branch("hasHits",&hasHits,"hasHits/O");
-
+    tree = fs->make<TTree>("tree","tree");
+    tree->Branch("eventNum",&eventNum,"eventNum/I");
+    tree->Branch("hasHits",&hasHits,"hasHits/O");
+    tree->Branch("nHits",&nHits,"nHits/I");
+    tree->Branch("pabs",pabs,"pabs[nHits]/F");
+    tree->Branch("energyLoss",energyLoss,"energyLoss[nHits]/F");
+    tree->Branch("thetaAtEntry",thetaAtEntry,"thetaAtEntry[nHits]/F");
+    tree->Branch("phiAtEntry",phiAtEntry,"phiAtEntry[nHits]/F");
+    tree->Branch("tof",tof,"tof[nHits]/F");
+    tree->Branch("particleType",particleType,"particleType[nHits]/I");
+    tree->Branch("detUnitId",detUnitId,"detUnitId[nHits]/I");
+    tree->Branch("trackId",trackId,"trackId[nHits]/I");
 
 }
 
@@ -135,10 +154,22 @@ PLTPileupProducer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
     edm::Handle<PSimHitContainer> simHitHandle;
     edm::InputTag tag("g4SimHits","PLTHits","SIM");
     iEvent.getByLabel(tag,simHitHandle);
-    hasHits = (simHitHandle->size()>0 ? true : false);
+    nHits = simHitHandle->size();
+    hasHits = (nHits>0 ? true : false);
+
+    for (int iHit = 0; iHit < (int)simHitHandle->size(); iHit++){
+        PSimHit hit = simHitHandle->at(iHit);
+        pabs[iHit] = hit.pabs();
+        energyLoss[iHit] = hit.energyLoss();
+        thetaAtEntry[iHit] = hit.thetaAtEntry();
+        phiAtEntry[iHit] = hit.phiAtEntry();
+        tof[iHit] = hit.tof();
+        particleType[iHit] = hit.particleType();
+        detUnitId[iHit] = hit.detUnitId();
+        trackId[iHit] = hit.trackId();
+    }
+
     tree->Fill();
-
-
 
 }
 
