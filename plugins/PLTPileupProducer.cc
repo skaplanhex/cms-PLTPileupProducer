@@ -167,6 +167,16 @@ PLTPileupProducer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSet
 
     tree->Fill();
 
+    // clear the vectors for the next event
+    pabs.clear();
+    energyLoss.clear();
+    thetaAtEntry.clear();
+    phiAtEntry.clear();
+    tof.clear();
+    particleType.clear();
+    detUnitId.clear();
+    trackId.clear();
+
 }
 
 
