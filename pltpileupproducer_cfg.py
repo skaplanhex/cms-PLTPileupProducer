@@ -45,7 +45,7 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(options.maxE
 
 #if cfi file passed in at runtime, use it as input
 if options.inputCfi != "DUMMY":
-    process.load("Analyzers.PLTSimHitAnalyzer."+options.inputCfi)
+    process.load("Analyzers.PLTPileupProducer."+options.inputCfi)
 #if no file is passed in at runtime, use this as the input
 else:
     process.source = cms.Source("PoolSource",
