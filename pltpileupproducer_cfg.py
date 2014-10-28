@@ -48,14 +48,15 @@ if options.inputCfi != "DUMMY":
     process.load("Analyzers.PLTPileupProducer."+options.inputCfi)
 #if no file is passed in at runtime, use this as the input
 else:
-    process.source = cms.Source("PoolSource",
-            fileNames = cms.untracked.vstring(
-                #"file:/uscms_data/d3/skaplan/PLT/sim/CMSSW_7_1_0_pre4/src/outfile14TeV.root"
-                #'/store/user/skaplan/MinBiasBeamSpotPhi0R0/outfile14TeV_18_1_OfZ.root'
-                # '/store/user/skaplan/noreplica/MinBias14TeV/outfile14TeVSKIM_313_1_qk7.root'
-                "/store/user/skaplan/noreplica/MinBias_WithSimTracks/outfile14TeVSKIM_33_1_oLh.root"
-            )
-    )
+    process.load("Analyzers.PLTSimHitAnalyzer.MinBias14TeV_cfi")
+    # process.source = cms.Source("PoolSource",
+    #         fileNames = cms.untracked.vstring(
+    #             #"file:/uscms_data/d3/skaplan/PLT/sim/CMSSW_7_1_0_pre4/src/outfile14TeV.root"
+    #             #'/store/user/skaplan/MinBiasBeamSpotPhi0R0/outfile14TeV_18_1_OfZ.root'
+    #             # '/store/user/skaplan/noreplica/MinBias14TeV/outfile14TeVSKIM_313_1_qk7.root'
+    #             "/store/user/skaplan/noreplica/MinBias_WithSimTracks/outfile14TeVSKIM_33_1_oLh.root"
+    #         )
+    # )
 process.source.duplicateCheckMode = cms.untracked.string('noDuplicateCheck')
 
 process.TFileService = cms.Service("TFileService",
